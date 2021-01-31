@@ -66,13 +66,23 @@ class CrimeFragment : Fragment() {
         updateUI()
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        model.saveCrime(crime)
+    }
+
     private fun updateUI() {
         titleEditText.setText(crime.title)
         dateButton.apply {
             text = crime.date.toString()
             isEnabled = false
         }
-        solvedCheckBox.isChecked = crime.isSolved
+        solvedCheckBox.apply {
+            isChecked = crime.isSolved
+            jumpDrawablesToCurrentState()
+        }
+
     }
 
     private fun configureEditTextListener() {

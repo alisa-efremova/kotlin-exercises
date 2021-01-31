@@ -8,6 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.criminalintent.Crime
 import java.lang.IllegalStateException
 import java.util.*
+import java.util.concurrent.Executors
 
 private const val DATABASE_NAME = "crime-database"
 
@@ -27,6 +28,7 @@ class CrimeRepository private constructor(context: Context) {
         .build()
 
     private val crimeDao = database.crimeDao()
+    private val executor = Executors.newSingleThreadExecutor()
 
     fun getCrimes(): LiveData<List<Crime>> {
         return crimeDao.getCrimes()
@@ -34,6 +36,18 @@ class CrimeRepository private constructor(context: Context) {
 
     fun getCrime(id: UUID): LiveData<Crime?> {
         return crimeDao.getCrime(id)
+    }
+
+    fun updateCrime(crime: Crime) {
+        executor.execute {
+            crimeDao.updateCrime(crime)
+        }
+    }
+
+    fun insertCrime(crime: Crime) {
+        executor.execute {
+            crimeDao.insertCrime(crime)
+        }
     }
 
     companion object {
