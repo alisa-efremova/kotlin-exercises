@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.*
 
-open class CrimeHolder(view: View)
-    : RecyclerView.ViewHolder(view), View.OnClickListener {
+open class CrimeHolder(view: View, callbacks: Callbacks?)
+    : RecyclerView.ViewHolder(view) {
 
     private val titleTextView: TextView = view.findViewById(R.id.crime_title)
     private val dateTextView: TextView = view.findViewById(R.id.crime_date)
@@ -19,7 +19,9 @@ open class CrimeHolder(view: View)
     private lateinit var crime: Crime
 
     init {
-        itemView.setOnClickListener(this)
+        itemView.setOnClickListener {
+            callbacks?.onCrimeSelected(crime.id)
+        }
     }
 
     open fun bindCrime(crime: Crime) {
@@ -32,15 +34,13 @@ open class CrimeHolder(view: View)
 
         solvedImageView.visibility = if (this.crime.isSolved) View.VISIBLE else View.GONE
     }
-
-    override fun onClick(view: View?) {
-
-    }
 }
 
-class StandardCrimeHolder(view: View) : CrimeHolder(view)
+class StandardCrimeHolder(view: View, callbacks: Callbacks?)
+    : CrimeHolder(view, callbacks)
 
-class SeriousCrimeHolder(view: View) : CrimeHolder(view) {
+class SeriousCrimeHolder(view: View, callbacks: Callbacks?)
+    : CrimeHolder(view, callbacks) {
     private val callPoliceButton: Button = view.findViewById(R.id.call_police_button)
 
     init {

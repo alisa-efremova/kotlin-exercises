@@ -10,7 +10,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import androidx.lifecycle.ViewModelProvider
+import java.util.*
 
+private const val ARG_CRIME_ID = "crime_id"
 
 class CrimeFragment : Fragment() {
 
@@ -20,10 +23,16 @@ class CrimeFragment : Fragment() {
 
     private lateinit var crime: Crime
 
+    private val model: CrimeViewModel by lazy {
+        ViewModelProvider(this).get(CrimeViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         crime = Crime()
+        val crimeId: UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
+        model.loadCrime(crimeId)
     }
 
     override fun onCreateView(
@@ -35,12 +44,35 @@ class CrimeFragment : Fragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        model.crimeLiveData.observe(
+            viewLifecycleOwner,
+            { crime ->
+                crime?.let {
+                    this.crime = crime
+                    updateUI()
+                }
+            }
+        )
+    }
+
     override fun onStart() {
         super.onStart()
 
         configureEditTextListener()
-        configureButton()
-        configureCheckbox()
+        configureCheckboxListener()
+        updateUI()
+    }
+
+    private fun updateUI() {
+        titleEditText.setText(crime.title)
+        dateButton.apply {
+            text = crime.date.toString()
+            isEnabled = false
+        }
+        solvedCheckBox.isChecked = crime.isSolved
     }
 
     private fun configureEditTextListener() {
@@ -59,14 +91,7 @@ class CrimeFragment : Fragment() {
         titleEditText.addTextChangedListener(titleWatcher)
     }
 
-    private fun configureButton() {
-        dateButton.apply {
-            text = crime.date.toString()
-            isEnabled = false
-        }
-    }
-
-    private fun configureCheckbox() {
+    private fun configureCheckboxListener() {
         solvedCheckBox.apply {
             setOnCheckedChangeListener { _, isChecked ->
                 crime.isSolved = isChecked
@@ -75,8 +100,13 @@ class CrimeFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): CrimeFragment {
-            return CrimeFragment()
+        fun newInstance(crimeId: UUID): CrimeFragment {
+            val args = Bundle().apply {
+                putSerializable(ARG_CRIME_ID, crimeId)
+            }
+            return CrimeFragment().apply {
+                arguments = args
+            }
         }
     }
 

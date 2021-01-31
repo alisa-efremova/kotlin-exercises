@@ -1,5 +1,6 @@
 package com.example.criminalintent
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,6 +18,12 @@ class CrimeListFragment : Fragment() {
 
     private lateinit var crimeRecyclerView: RecyclerView
     private var adapter: CrimeAdapter? = null
+    private var callbacks: Callbacks? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as? Callbacks
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +51,13 @@ class CrimeListFragment : Fragment() {
         )
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
+    }
+
     private fun updateUI(crimes: List<Crime>) {
-        adapter = CrimeAdapter(crimes)
+        adapter = CrimeAdapter(crimes, callbacks)
         crimeRecyclerView.adapter = adapter
     }
 
