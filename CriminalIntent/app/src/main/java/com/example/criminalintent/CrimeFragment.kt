@@ -14,8 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import java.util.*
 
-private const val ARG_CRIME_ID = "crime_id"
-
 class CrimeFragment : Fragment() {
 
     private lateinit var titleEditText: EditText
@@ -109,17 +107,6 @@ class CrimeFragment : Fragment() {
         solvedCheckBox.apply {
             setOnCheckedChangeListener { _, isChecked ->
                 crime.isSolved = isChecked
-            }
-        }
-    }
-
-    companion object {
-        fun newInstance(crimeId: UUID): CrimeFragment {
-            val args = Bundle().apply {
-                putSerializable(ARG_CRIME_ID, crimeId)
-            }
-            return CrimeFragment().apply {
-                arguments = args
             }
         }
     }
