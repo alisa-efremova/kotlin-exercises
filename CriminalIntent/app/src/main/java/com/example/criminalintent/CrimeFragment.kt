@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import java.util.*
 
 private const val ARG_CRIME_ID = "crime_id"
@@ -31,7 +32,10 @@ class CrimeFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         crime = Crime()
-        val crimeId: UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
+
+        val args: CrimeFragmentArgs by navArgs()
+        val crimeId: UUID = args.crimeId
+
         model.loadCrime(crimeId)
     }
 
