@@ -31,7 +31,9 @@ class CrimeListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
         initViews(view)
-        updateUI(emptyList())
+
+        adapter = CrimeAdapter(callbacks)
+        crimeRecyclerView.adapter = adapter
         return view
     }
 
@@ -41,7 +43,7 @@ class CrimeListFragment : Fragment() {
                 viewLifecycleOwner,
                 { crimes ->
                     crimes?.let {
-                        updateUI(crimes)
+                        adapter?.submitList(crimes)
                     }
                 }
         )
@@ -50,11 +52,6 @@ class CrimeListFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         callbacks = null
-    }
-
-    private fun updateUI(crimes: List<Crime>) {
-        adapter = CrimeAdapter(crimes, callbacks)
-        crimeRecyclerView.adapter = adapter
     }
 
     private fun initViews(view: View) {
