@@ -11,6 +11,8 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import java.util.*
 
@@ -78,7 +80,11 @@ class CrimeFragment : Fragment() {
         titleEditText.setText(crime.title)
         dateButton.apply {
             text = crime.date.toString()
-            isEnabled = false
+
+            val navController = findNavController()
+            setOnClickListener {
+                navController.navigate(CrimeFragmentDirections.actionEditDate(crime.date))
+            }
         }
         solvedCheckBox.apply {
             isChecked = crime.isSolved
