@@ -14,7 +14,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import java.util.*
 
-class CrimeFragment : Fragment() {
+private const val DIALOG_DATE = "DialogDate"
+private const val REQUEST_DATE = 0
+
+class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
 
     private lateinit var titleEditText: EditText
     private lateinit var dateButton: Button
@@ -74,11 +77,21 @@ class CrimeFragment : Fragment() {
         model.saveCrime(crime)
     }
 
+    override fun onDateSelected(date: Date) {
+        crime.date = date
+        updateUI()
+    }
+
     private fun updateUI() {
         titleEditText.setText(crime.title)
         dateButton.apply {
             text = crime.date.toString()
-            isEnabled = false
+            setOnClickListener {
+                DatePickerFragment.newInstance(crime.date).apply {
+                    setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+                    show(this@CrimeFragment.parentFragmentManager, DIALOG_DATE)
+                }
+            }
         }
         solvedCheckBox.apply {
             isChecked = crime.isSolved
