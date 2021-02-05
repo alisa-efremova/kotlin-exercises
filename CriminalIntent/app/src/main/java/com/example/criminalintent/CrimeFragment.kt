@@ -12,15 +12,19 @@ import android.widget.CheckBox
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
+import java.text.SimpleDateFormat
 import java.util.*
 
 private const val DIALOG_DATE = "DialogDate"
+private const val DIALOG_TIME = "DialogTime"
 private const val REQUEST_DATE = 0
+private const val REQUEST_TIME = 1
 
 class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
 
     private lateinit var titleEditText: EditText
     private lateinit var dateButton: Button
+    private lateinit var timeButton: Button
     private lateinit var solvedCheckBox: CheckBox
 
     private lateinit var crime: Crime
@@ -46,6 +50,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_crime, container, false)
         initViews(view)
+        configureListeners()
         return view
     }
 
@@ -84,20 +89,31 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
 
     private fun updateUI() {
         titleEditText.setText(crime.title)
-        dateButton.apply {
-            text = crime.date.toString()
-            setOnClickListener {
-                DatePickerFragment.newInstance(crime.date).apply {
-                    setTargetFragment(this@CrimeFragment, REQUEST_DATE)
-                    show(this@CrimeFragment.parentFragmentManager, DIALOG_DATE)
-                }
-            }
-        }
+        val datePattern = "EEEE, MMM dd, yyyy"
+        val timePattern = "hh:mm aaa"
+        dateButton.text = SimpleDateFormat(datePattern, Locale("en-US")).format(crime.date)
+        timeButton.text = SimpleDateFormat(timePattern, Locale("en-US")).format(crime.date)
+
         solvedCheckBox.apply {
             isChecked = crime.isSolved
             jumpDrawablesToCurrentState()
         }
+    }
 
+    private fun configureListeners() {
+        dateButton.setOnClickListener {
+            DatePickerFragment.newInstance(crime.date).apply {
+                setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+                show(this@CrimeFragment.parentFragmentManager, DIALOG_DATE)
+            }
+        }
+
+        timeButton.setOnClickListener {
+            TimePickerFragment.newInstance(crime.date).apply {
+                setTargetFragment(this@CrimeFragment, REQUEST_TIME)
+                show(this@CrimeFragment.parentFragmentManager, DIALOG_TIME)
+            }
+        }
     }
 
     private fun configureEditTextListener() {
@@ -127,6 +143,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
     private fun initViews(view: View) {
         titleEditText = view.findViewById(R.id.title_edit_text)
         dateButton = view.findViewById(R.id.date_button)
+        timeButton = view.findViewById(R.id.time_button)
         solvedCheckBox = view.findViewById(R.id.solved_checkbox)
     }
 
