@@ -10,4 +10,8 @@ class CrimeListViewModel : ViewModel() {
     fun addCrime(crime: Crime) {
         repository.insertCrime(crime)
     }
+
+    fun hasCrimes(): Boolean {
+        return !crimeListLiveData.value.isNullOrEmpty()
+    }
 }
