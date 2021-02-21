@@ -18,13 +18,19 @@ private val MIGRATION_1_2 = object : Migration(1, 2) {
     }
 }
 
+private val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE Crime ADD COLUMN suspect TEXT NOT NULL DEFAULT ''")
+    }
+}
+
 class CrimeRepository private constructor(context: Context) {
 
     private val database: CrimeDatabase = Room.databaseBuilder(
             context.applicationContext,
             CrimeDatabase::class.java,
             DATABASE_NAME)
-        .addMigrations(MIGRATION_1_2)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
         .build()
 
     private val crimeDao = database.crimeDao()

@@ -76,5 +76,25 @@
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="date_button,time_button" />
 
+    <Button
+        android:id="@+id/choose_suspect_button"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/choose_suspect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/solved_checkbox" />
+
+    <Button
+        android:id="@+id/send_report_button"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/send_crime_report"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_suspect_button" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
