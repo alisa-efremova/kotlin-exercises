@@ -4,16 +4,12 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import java.util.*
 
 private const val ARG_DATE = "date"
 
 class DatePickerFragment : DialogFragment() {
-
-    interface Callbacks {
-        fun onDateSelected(date: Date)
-    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val date = arguments?.getSerializable(ARG_DATE) as Date
 
@@ -28,9 +24,10 @@ class DatePickerFragment : DialogFragment() {
                     calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE)
             ).time
-            targetFragment?.let {
-                (targetFragment as Callbacks).onDateSelected(resultDate)
-            }
+
+            setFragmentResult(CrimeFragment.REQUEST_KEY_DATE, Bundle().apply {
+                putSerializable(CrimeFragment.ARG_DATE, resultDate)
+            })
         }
 
         return DatePickerDialog(

@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import java.util.*
 
 private const val ARG_DATE = "date"
@@ -25,9 +26,10 @@ class TimePickerFragment : DialogFragment() {
                     hour,
                     minute
             ).time
-            targetFragment?.let {
-                (targetFragment as DatePickerFragment.Callbacks).onDateSelected(resultDate)
-            }
+
+            setFragmentResult(CrimeFragment.REQUEST_KEY_DATE, Bundle().apply {
+                putSerializable(CrimeFragment.ARG_DATE, resultDate)
+            })
         }
 
         return TimePickerDialog(

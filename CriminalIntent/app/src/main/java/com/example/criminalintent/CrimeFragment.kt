@@ -18,6 +18,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import java.text.SimpleDateFormat
@@ -25,11 +26,9 @@ import java.util.*
 
 private const val DIALOG_DATE = "DialogDate"
 private const val DIALOG_TIME = "DialogTime"
-private const val REQUEST_DATE = 0
-private const val REQUEST_TIME = 1
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
-class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
+class CrimeFragment : Fragment() {
 
     private lateinit var titleEditText: EditText
     private lateinit var dateButton: Button
@@ -55,6 +54,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
 
         model.loadCrime(crimeId)
 
+        registerFragmentListeners()
         registerLaunchers()
     }
 
@@ -66,14 +66,6 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         initViews(view)
         configureListeners()
         return view
-    }
-
-    private fun registerLaunchers() {
-        pickContactLauncher = registerForActivityResult(
-                ActivityResultContracts.PickContact()
-        ) { contactUri: Uri? ->
-            parseContact(contactUri)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,11 +96,6 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         model.saveCrime(crime)
     }
 
-    override fun onDateSelected(date: Date) {
-        crime.date = date
-        updateUI()
-    }
-
     private fun updateUI() {
         titleEditText.setText(crime.title)
         val datePattern = "EEEE, MMM dd, yyyy"
@@ -126,17 +113,37 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         }
     }
 
+    private fun registerFragmentListeners() {
+        setFragmentResultListener(REQUEST_KEY_DATE) { key, result ->
+            when (key) {
+                REQUEST_KEY_DATE -> {
+                    val date = result.getSerializable(ARG_DATE) as Date?
+                    if (date != null) {
+                        crime.date = date
+                        updateUI()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun registerLaunchers() {
+        pickContactLauncher = registerForActivityResult(
+                ActivityResultContracts.PickContact()
+        ) { contactUri: Uri? ->
+            parseContact(contactUri)
+        }
+    }
+
     private fun configureListeners() {
         dateButton.setOnClickListener {
             DatePickerFragment.newInstance(crime.date).apply {
-                setTargetFragment(this@CrimeFragment, REQUEST_DATE)
                 show(this@CrimeFragment.parentFragmentManager, DIALOG_DATE)
             }
         }
 
         timeButton.setOnClickListener {
             TimePickerFragment.newInstance(crime.date).apply {
-                setTargetFragment(this@CrimeFragment, REQUEST_TIME)
                 show(this@CrimeFragment.parentFragmentManager, DIALOG_TIME)
             }
         }
@@ -250,4 +257,8 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         chooseSuspectButton = view.findViewById(R.id.choose_suspect_button)
     }
 
+    companion object {
+        const val REQUEST_KEY_DATE = "requestKeyDate"
+        const val ARG_DATE = "date"
+    }
 }
