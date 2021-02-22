@@ -1,5 +1,6 @@
 package com.example.criminalintent
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
@@ -16,8 +17,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -35,7 +38,9 @@ class CrimeFragment : Fragment() {
     private lateinit var solvedCheckBox: CheckBox
     private lateinit var reportButton: Button
     private lateinit var chooseSuspectButton: Button
+    private lateinit var callSuspectButton: Button
     private lateinit var pickContactLauncher: ActivityResultLauncher<Void>
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
     private lateinit var crime: Crime
 
@@ -110,6 +115,8 @@ class CrimeFragment : Fragment() {
         if (crime.suspect.isNotEmpty()) {
             chooseSuspectButton.text = crime.suspect
         }
+
+        callSuspectButton.isEnabled = crime.suspectId != 0
     }
 
     private fun registerFragmentListeners() {
@@ -132,6 +139,14 @@ class CrimeFragment : Fragment() {
         ) { contactUri: Uri? ->
             parseContact(contactUri)
         }
+
+        requestPermissionLauncher = registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                tryToCallSuspect()
+            }
+        }
     }
 
     private fun configureListeners() {
@@ -153,6 +168,10 @@ class CrimeFragment : Fragment() {
             }
             isEnabled = isContactIntentAvailable()
         }
+
+        callSuspectButton.setOnClickListener {
+            requestPermissionIfRequired()
+        }
     }
 
     private fun parseContact(contactUri: Uri?) {
@@ -170,6 +189,7 @@ class CrimeFragment : Fragment() {
 
             it.moveToFirst()
             crime.suspect = it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+            crime.suspectId = it.getString(it.getColumnIndex(ContactsContract.Contacts._ID)).toInt()
 
             model.saveCrime(crime)
             updateUI()
@@ -197,6 +217,47 @@ class CrimeFragment : Fragment() {
 
     private fun chooseSuspect() {
         pickContactLauncher.launch(null)
+    }
+
+    private fun tryToCallSuspect() {
+        val phoneNumber = getPhoneNumber(crime.suspectId)
+        if (phoneNumber != null) {
+            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
+            startActivity(intent)
+        } else {
+            Toast.makeText(requireContext(), "No phone numbers assigned", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getPhoneNumber(contactId: Int): String? {
+        val phoneCursor = requireActivity().contentResolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                arrayOf(ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER), null, null, null)
+        phoneCursor?.use { phones ->
+            if (phones.moveToFirst()) {
+                do {
+                    val id = phones.getString(phones.getColumnIndex(
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID)).toInt()
+                    if (id == contactId) {
+                        return phones.getString(phones.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Phone.NUMBER))
+                    }
+                } while (phones.moveToNext())
+            }
+        }
+
+        return null
+    }
+
+    private fun requestPermissionIfRequired() {
+        if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_DENIED) {
+            requestPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
+        } else {
+            tryToCallSuspect()
+        }
     }
 
     private fun configureEditTextListener() {
@@ -250,6 +311,7 @@ class CrimeFragment : Fragment() {
         solvedCheckBox = view.findViewById(R.id.solved_checkbox)
         reportButton = view.findViewById(R.id.send_report_button)
         chooseSuspectButton = view.findViewById(R.id.choose_suspect_button)
+        callSuspectButton = view.findViewById(R.id.call_suspect_button)
     }
 
     companion object {
