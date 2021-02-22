@@ -1,6 +1,5 @@
 package com.example.criminalintent
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
@@ -17,6 +16,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import java.text.SimpleDateFormat
@@ -26,7 +27,6 @@ private const val DIALOG_DATE = "DialogDate"
 private const val DIALOG_TIME = "DialogTime"
 private const val REQUEST_DATE = 0
 private const val REQUEST_TIME = 1
-private const val REQUEST_CONTACT = 2
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
 class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
@@ -37,6 +37,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
     private lateinit var solvedCheckBox: CheckBox
     private lateinit var reportButton: Button
     private lateinit var chooseSuspectButton: Button
+    private lateinit var pickContactLauncher: ActivityResultLauncher<Void>
 
     private lateinit var crime: Crime
 
@@ -53,6 +54,8 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         val crimeId: UUID = args.crimeId
 
         model.loadCrime(crimeId)
+
+        registerLaunchers()
     }
 
     override fun onCreateView(
@@ -63,6 +66,14 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         initViews(view)
         configureListeners()
         return view
+    }
+
+    private fun registerLaunchers() {
+        pickContactLauncher = registerForActivityResult(
+                ActivityResultContracts.PickContact()
+        ) { contactUri: Uri? ->
+            parseContact(contactUri)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -91,33 +102,6 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         super.onStop()
 
         model.saveCrime(crime)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode != Activity.RESULT_OK) {
-            return
-        }
-
-        when {
-            requestCode == REQUEST_CONTACT && data != null -> {
-                val contactUri: Uri? = data.data
-                val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
-                val cursor = requireActivity().contentResolver.query(contactUri!!, queryFields,
-                        null, null, null)
-                cursor?.use {
-                    if (it.count  == 0) {
-                        return
-                    }
-
-                    it.moveToFirst()
-                    crime.suspect = it.getString(0)
-                    model.saveCrime(crime)
-                    updateUI()
-                }
-            }
-        }
     }
 
     override fun onDateSelected(date: Date) {
@@ -169,6 +153,27 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         }
     }
 
+    private fun parseContact(contactUri: Uri?) {
+        if (contactUri == null) {
+            return
+        }
+
+        val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME, ContactsContract.Contacts._ID)
+        val cursor = requireActivity().contentResolver.query(contactUri, queryFields,
+                null, null, null)
+        cursor?.use {
+            if (it.count  == 0) {
+                return
+            }
+
+            it.moveToFirst()
+            crime.suspect = it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+
+            model.saveCrime(crime)
+            updateUI()
+        }
+    }
+
     private fun sendReport() {
         Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
@@ -189,8 +194,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
     }
 
     private fun chooseSuspect() {
-        val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
-        startActivityForResult(intent, REQUEST_CONTACT)
+        pickContactLauncher.launch(null)
     }
 
     private fun configureEditTextListener() {
