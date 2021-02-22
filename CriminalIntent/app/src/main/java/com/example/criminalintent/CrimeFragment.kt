@@ -20,12 +20,11 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val DIALOG_DATE = "DialogDate"
-private const val DIALOG_TIME = "DialogTime"
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
 class CrimeFragment : Fragment() {
@@ -137,15 +136,11 @@ class CrimeFragment : Fragment() {
 
     private fun configureListeners() {
         dateButton.setOnClickListener {
-            DatePickerFragment.newInstance(crime.date).apply {
-                show(this@CrimeFragment.parentFragmentManager, DIALOG_DATE)
-            }
+            findNavController().navigate(CrimeFragmentDirections.actionEditDate(crime.date))
         }
 
         timeButton.setOnClickListener {
-            TimePickerFragment.newInstance(crime.date).apply {
-                show(this@CrimeFragment.parentFragmentManager, DIALOG_TIME)
-            }
+            findNavController().navigate(CrimeFragmentDirections.actionEditTime(crime.date))
         }
 
         reportButton.setOnClickListener {
