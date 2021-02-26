@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.example.criminalintent.db.CrimeRepository
+import java.io.File
 import java.util.*
 
 class CrimeViewModel : ViewModel() {
@@ -16,10 +17,16 @@ class CrimeViewModel : ViewModel() {
     }
 
     fun loadCrime(crimeId: UUID) {
-        crimeIdLiveData.value = crimeId
+        if (crimeIdLiveData.value != crimeId) {
+            crimeIdLiveData.value = crimeId
+        }
     }
 
     fun saveCrime(crime: Crime) {
         repository.updateCrime(crime)
+    }
+
+    fun getPhotoFile(crime: Crime): File {
+        return repository.getPhotoFile(crime)
     }
 }
