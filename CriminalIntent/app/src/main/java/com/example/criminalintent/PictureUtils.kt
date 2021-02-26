@@ -1,38 +1,36 @@
 package com.example.criminalintent
 
-import android.app.Activity
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Point
-import kotlin.math.roundToInt
+import android.widget.ImageView
+import kotlin.math.max
+import kotlin.math.min
 
 class PictureUtils {
-    fun getScaledBitmap(path: String, activity: Activity): Bitmap {
-        val size = Point()
-        activity.windowManager.defaultDisplay.getSize(size)
-        return getScaledBitmap(path, size.x, size.y)
-    }
 
-    private fun getScaledBitmap(path: String, destWidth: Int, destHeight: Int): Bitmap {
-        var options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(path, options)
-        val srcWidth = options.outWidth.toFloat()
-        val srcHeight = options.outHeight.toFloat()
+    fun setScaledImage(imageView: ImageView, currentPhotoPath: String) {
+        // Get the dimensions of the View
+        val targetW: Int = imageView.width
+        val targetH: Int = imageView.height
 
-        var inSampleSize = 1
-        if (srcHeight > destHeight || srcWidth > destWidth) {
-            val heightScale = srcHeight / destHeight
-            val widthScale = srcWidth / destWidth
-            val sampleScale = if (heightScale > widthScale) {
-                heightScale
-            } else {
-                widthScale
-            }
-            inSampleSize = sampleScale.roundToInt()
+        val bmOptions = BitmapFactory.Options().apply {
+            // Get the dimensions of the bitmap
+            inJustDecodeBounds = true
+
+            BitmapFactory.decodeFile(currentPhotoPath, this)
+
+            val photoW: Int = outWidth
+            val photoH: Int = outHeight
+
+            // Determine how much to scale down the image
+            val scaleFactor: Int = max(1, min(photoW / targetW, photoH / targetH))
+
+            // Decode the image file into a Bitmap sized to fill the View
+            inJustDecodeBounds = false
+            inSampleSize = scaleFactor
         }
-        options = BitmapFactory.Options()
-        options.inSampleSize = inSampleSize
-        return BitmapFactory.decodeFile(path, options)
+
+        BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
+            imageView.setImageBitmap(bitmap)
+        }
     }
 }

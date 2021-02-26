@@ -165,8 +165,7 @@ class CrimeFragment : Fragment() {
 
     private fun updatePhotoView() {
         if (photoFile.exists()) {
-            val bitmap = PictureUtils().getScaledBitmap(photoFile.path, requireActivity())
-            crimeImageView.setImageBitmap(bitmap)
+            PictureUtils().setScaledImage(crimeImageView, photoFile.path)
         } else {
             crimeImageView.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.placeholder, null))
         }
