@@ -1,6 +1,7 @@
 package com.example.criminalintent.db
 
 import android.content.Context
+import android.os.Environment
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import androidx.room.migration.Migration
@@ -42,9 +43,9 @@ class CrimeRepository private constructor(context: Context) {
     private val crimeDao = database.crimeDao()
     private val executor = Executors.newSingleThreadExecutor()
 
-    private val filesDir = context.applicationContext.filesDir
+    private val storageDir = context.applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
-    fun getPhotoFile(crime: Crime): File = File(filesDir, crime.photoFileName)
+    fun getPhotoFile(crime: Crime): File = File(storageDir, crime.photoFileName)
 
     fun getCrimes(): LiveData<List<Crime>> {
         return crimeDao.getCrimes()

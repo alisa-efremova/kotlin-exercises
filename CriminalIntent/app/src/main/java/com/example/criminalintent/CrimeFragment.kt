@@ -19,6 +19,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
@@ -84,10 +85,12 @@ class CrimeFragment : Fragment() {
             viewLifecycleOwner,
             { crime ->
                 crime?.let {
+                    println("-- crime loaded")
                     this.crime = crime
                     photoFile = model.getPhotoFile(crime)
                     photoUri = FileProvider.getUriForFile(
-                        requireActivity(), "com.example.criminalintent.fileprovier", photoFile)
+                        requireActivity(), "com.example.criminalintent.fileprovier", photoFile
+                    )
                     updateUI()
                 }
             }
@@ -105,12 +108,6 @@ class CrimeFragment : Fragment() {
         super.onStop()
 
         model.saveCrime(crime)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-
-        requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     }
 
     private fun updateUI() {
@@ -163,13 +160,7 @@ class CrimeFragment : Fragment() {
             }
         }
 
-        takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) {
-            result: Boolean ->
-                if (result) {
-                    requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                    updatePhotoView()
-                }
-        }
+        takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) {}
     }
 
     private fun updatePhotoView() {
@@ -177,7 +168,7 @@ class CrimeFragment : Fragment() {
             val bitmap = PictureUtils().getScaledBitmap(photoFile.path, requireActivity())
             crimeImageView.setImageBitmap(bitmap)
         } else {
-            crimeImageView.setImageDrawable(null)
+            crimeImageView.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.placeholder, null))
         }
     }
 
@@ -198,7 +189,7 @@ class CrimeFragment : Fragment() {
             isEnabled = isContactIntentAvailable()
 
             setOnClickListener {
-                chooseSuspect()
+                pickContactLauncher.launch(null)
             }
         }
 
@@ -206,27 +197,13 @@ class CrimeFragment : Fragment() {
             isEnabled = isCameraAvailable()
 
             setOnClickListener {
-                takePicture()
+                takePictureLauncher.launch(photoUri)
             }
         }
 
         callSuspectButton.setOnClickListener {
             requestPermissionIfRequired()
         }
-    }
-
-    private fun takePicture() {
-        val packageManager: PackageManager = requireActivity().packageManager
-        val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-        val cameraActivities: List<ResolveInfo> = packageManager.queryIntentActivities(captureImage,
-            PackageManager.MATCH_DEFAULT_ONLY)
-        for (cameraActivity in cameraActivities) {
-            requireActivity().grantUriPermission(cameraActivity.activityInfo.packageName,
-                photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-        }
-
-        takePictureLauncher.launch(photoUri)
     }
 
     private fun parseContact(contactUri: Uri?) {
@@ -277,10 +254,6 @@ class CrimeFragment : Fragment() {
         val resolvedActivity: ResolveInfo? = packageManager.resolveActivity(intent,
             PackageManager.MATCH_DEFAULT_ONLY)
         return resolvedActivity != null
-    }
-
-    private fun chooseSuspect() {
-        pickContactLauncher.launch(null)
     }
 
     private fun tryToCallSuspect() {
