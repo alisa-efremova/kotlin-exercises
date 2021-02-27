@@ -47,8 +47,8 @@ class CrimeFragment : Fragment() {
     private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
 
     private lateinit var crime: Crime
-    private lateinit var photoFile: File
-    private lateinit var photoUri: Uri
+    private var photoFile: File? = null
+    private var photoUri: Uri? = null
 
     private val model: CrimeViewModel by lazy {
         ViewModelProvider(this).get(CrimeViewModel::class.java)
@@ -89,7 +89,7 @@ class CrimeFragment : Fragment() {
                     this.crime = crime
                     photoFile = model.getPhotoFile(crime)
                     photoUri = FileProvider.getUriForFile(
-                        requireActivity(), "com.example.criminalintent.fileprovier", photoFile
+                        requireActivity(), "com.example.criminalintent.fileprovier", photoFile!!
                     )
                     updateUI()
                 }
@@ -129,6 +129,8 @@ class CrimeFragment : Fragment() {
         callSuspectButton.isEnabled = crime.suspectId != 0
 
         updatePhotoView()
+
+        crimeImageView.isEnabled = photoFile?.exists() ?: false
     }
 
     private fun registerFragmentListeners() {
@@ -164,8 +166,8 @@ class CrimeFragment : Fragment() {
     }
 
     private fun updatePhotoView() {
-        if (photoFile.exists()) {
-            PictureUtils().setScaledImage(crimeImageView, photoFile.path)
+        if (photoFile?.exists() == true) {
+            PictureUtils().setScaledImage(crimeImageView, photoFile!!.path)
         } else {
             crimeImageView.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.placeholder, null))
         }
@@ -202,6 +204,10 @@ class CrimeFragment : Fragment() {
 
         callSuspectButton.setOnClickListener {
             requestPermissionIfRequired()
+        }
+
+        crimeImageView.setOnClickListener {
+            findNavController().navigate(CrimeFragmentDirections.actionOpenPhoto(photoFile!!))
         }
     }
 
