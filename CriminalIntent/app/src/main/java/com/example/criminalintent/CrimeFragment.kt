@@ -85,7 +85,6 @@ class CrimeFragment : Fragment() {
             viewLifecycleOwner,
             { crime ->
                 crime?.let {
-                    println("-- crime loaded")
                     this.crime = crime
                     photoFile = model.getPhotoFile(crime)
                     photoUri = FileProvider.getUriForFile(
