@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Скандалы, интриги, расследования</string>
+    <string name="crime_title_hint">Введите название преступления</string>
+    <string name="crime_title_label">Название</string>
+    <string name="crime_details_label">Детали</string>
+    <string name="crime_solved_label">Раскрыто</string>
+    <string name="crime_call_police_label">Позвонить в полицию</string>
+    <string name="new_crime">Новое преступление</string>
+    <string name="no_crimes">Пока ни одного преступления</string>
+    <string name="choose_suspect">Выбрать подозреваемого</string>
+    <string name="send_crime_report">Послать отчет</string>
+    <string name="crime_report">%1$s! Преступление было обнаружено в %2$s. %3$s, и %4$s</string>
+    <string name="crime_report_solved">Дело раскрыто</string>
+    <string name="crime_report_unsolved">Дело не раскрыто</string>
+    <string name="crime_report_no_suspect">подозреваемых нет.</string>
+    <string name="crime_report_suspect">подозреваемый - %s.</string>
+    <string name="crime_report_subject">ОТЧЕТ ПО ПРЕСТУПЛЕНИЮ</string>
+    <string name="send_report">Послать отчет через</string>
+    <string name="call">Позвонить</string>
+</resources>

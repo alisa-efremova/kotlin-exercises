@@ -113,8 +113,8 @@ class CrimeFragment : Fragment() {
         titleEditText.setText(crime.title)
         val datePattern = "EEEE, MMM dd, yyyy"
         val timePattern = "hh:mm aaa"
-        dateButton.text = SimpleDateFormat(datePattern, Locale("en-US")).format(crime.date)
-        timeButton.text = SimpleDateFormat(timePattern, Locale("en-US")).format(crime.date)
+        dateButton.text = SimpleDateFormat(datePattern, Locale.getDefault()).format(crime.date)
+        timeButton.text = SimpleDateFormat(timePattern, Locale.getDefault()).format(crime.date)
 
         solvedCheckBox.apply {
             isChecked = crime.isSolved

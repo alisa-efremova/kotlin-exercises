@@ -30,7 +30,7 @@ open class CrimeHolder(view: View, callbacks: Callbacks?)
         titleTextView.text = this.crime.title
 
         val pattern = "EEEE, MMM dd, yyyy"
-        dateTextView.text = SimpleDateFormat(pattern, Locale("en-US")).format(this.crime.date)
+        dateTextView.text = SimpleDateFormat(pattern, Locale.getDefault()).format(this.crime.date)
 
         solvedImageView.visibility = if (this.crime.isSolved) View.VISIBLE else View.GONE
     }
