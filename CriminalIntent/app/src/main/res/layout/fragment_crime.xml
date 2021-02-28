@@ -73,6 +73,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_button" />
 
+    <CheckBox
+        android:id="@+id/requires_police_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/crime_requires_police"
+        app:layout_constraintBottom_toBottomOf="@+id/solved_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/solved_checkbox"
+        app:layout_constraintTop_toTopOf="@+id/solved_checkbox" />
+
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group"
         android:layout_width="wrap_content"

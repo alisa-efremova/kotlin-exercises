@@ -38,6 +38,7 @@ class CrimeFragment : Fragment() {
     private lateinit var dateButton: Button
     private lateinit var timeButton: Button
     private lateinit var solvedCheckBox: CheckBox
+    private lateinit var requiresPoliceCheckBox: CheckBox
     private lateinit var reportButton: Button
     private lateinit var chooseSuspectButton: Button
     private lateinit var callSuspectButton: Button
@@ -118,6 +119,11 @@ class CrimeFragment : Fragment() {
 
         solvedCheckBox.apply {
             isChecked = crime.isSolved
+            jumpDrawablesToCurrentState()
+        }
+
+        requiresPoliceCheckBox.apply {
+            isChecked = crime.requiresPolice
             jumpDrawablesToCurrentState()
         }
 
@@ -320,10 +326,12 @@ class CrimeFragment : Fragment() {
     }
 
     private fun configureCheckboxListener() {
-        solvedCheckBox.apply {
-            setOnCheckedChangeListener { _, isChecked ->
-                crime.isSolved = isChecked
-            }
+        solvedCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            crime.isSolved = isChecked
+        }
+
+        requiresPoliceCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            crime.requiresPolice = isChecked
         }
     }
 
@@ -353,6 +361,7 @@ class CrimeFragment : Fragment() {
         dateButton = view.findViewById(R.id.date_button)
         timeButton = view.findViewById(R.id.time_button)
         solvedCheckBox = view.findViewById(R.id.solved_checkbox)
+        requiresPoliceCheckBox = view.findViewById(R.id.requires_police_checkbox)
         reportButton = view.findViewById(R.id.send_report_button)
         chooseSuspectButton = view.findViewById(R.id.choose_suspect_button)
         callSuspectButton = view.findViewById(R.id.call_suspect_button)
