@@ -21,4 +21,7 @@
     <string name="crime_photo_button_description">Take photo of crime scene</string>
     <string name="crime_photo_no_image_description">Crime scene photo (not set)</string>
     <string name="crime_photo_image_description">Crime scene photo (set)</string>
+    <string name="no_title_description">Without title</string>
+    <string name="standard_crime_description">Standard crime</string>
+    <string name="strict_crime_description">Strict crime</string>
 </resources>

@@ -6,7 +6,7 @@
     <string name="crime_details_label">Детали</string>
     <string name="crime_solved_label">Раскрыто</string>
     <string name="crime_requires_police">Требуется обращение в полицию</string>
-    <string name="crime_call_police_label">Позвонить в полицию</string>
+    <string name="crime_call_police_label">Позвонить\nв полицию</string>
     <string name="new_crime">Новое преступление</string>
     <string name="no_crimes">Пока ни одного преступления</string>
     <string name="choose_suspect">Выбрать подозреваемого</string>
@@ -22,4 +22,7 @@
     <string name="crime_photo_button_description">Сделать фотографию места преступления</string>
     <string name="crime_photo_no_image_description">Фотография места преступления (не установлена)</string>
     <string name="crime_photo_image_description">Фотография места преступления (установлена)</string>
+    <string name="no_title_description">Без названия</string>
+    <string name="standard_crime_description">Преступление обычного уровня</string>
+    <string name="strict_crime_description">Серьезное преступление</string>
 </resources>

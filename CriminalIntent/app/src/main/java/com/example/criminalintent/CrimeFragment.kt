@@ -29,7 +29,9 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val DATE_FORMAT = "EEE, MMM, dd"
+private const val SHORT_DATE_FORMAT = "EEE, MMM, dd"
+private const val LONG_DATE_FORMAT = "EEEE, MMM dd, yyyy"
+private const val TIME_FORMAT = "hh:mm aaa"
 
 class CrimeFragment : Fragment() {
 
@@ -112,10 +114,9 @@ class CrimeFragment : Fragment() {
 
     private fun updateUI() {
         titleEditText.setText(crime.title)
-        val datePattern = "EEEE, MMM dd, yyyy"
-        val timePattern = "hh:mm aaa"
-        dateButton.text = SimpleDateFormat(datePattern, Locale.getDefault()).format(crime.date)
-        timeButton.text = SimpleDateFormat(timePattern, Locale.getDefault()).format(crime.date)
+
+        dateButton.text = SimpleDateFormat(LONG_DATE_FORMAT, Locale.getDefault()).format(crime.date)
+        timeButton.text = SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(crime.date)
 
         solvedCheckBox.apply {
             isChecked = crime.isSolved
@@ -342,7 +343,7 @@ class CrimeFragment : Fragment() {
             getString(R.string.crime_report_unsolved)
         }
 
-        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
+        val dateString = DateFormat.format(SHORT_DATE_FORMAT, crime.date).toString()
 
         val suspect = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)

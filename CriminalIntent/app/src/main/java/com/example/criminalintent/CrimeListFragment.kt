@@ -35,7 +35,7 @@ class CrimeListFragment : Fragment() {
         initViews(view)
         setHasOptionsMenu(true)
 
-        adapter = CrimeAdapter(callbacks)
+        adapter = CrimeAdapter(requireContext(), callbacks)
         crimeRecyclerView.adapter = adapter
 
         return view
