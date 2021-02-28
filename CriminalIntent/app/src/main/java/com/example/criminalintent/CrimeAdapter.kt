@@ -9,7 +9,7 @@ import java.util.*
 
 private const val TYPE_STANDARD_CRIME = 0
 private const val TYPE_SERIOUS_CRIME = 1
-private const val DESCR_DATE_FORMAT = "EEEE, MMM, dd"
+private const val DESCR_DATE_FORMAT = "EEEE, dd MMMM"
 
 class CrimeAdapter(val context: Context, val callbacks: Callbacks?)
     : ListAdapter<Crime, CrimeHolder>(CrimeItemDiffCallback()) {
@@ -56,7 +56,7 @@ class CrimeAdapter(val context: Context, val callbacks: Callbacks?)
         else
             context.getString(R.string.crime_report_unsolved)
 
-        return "$crimeType $title, зарегистрировано в $dateString, $solved"
+        return context.getString(R.string.crime_list_item_description, crimeType, title, dateString, solved)
     }
 }
 

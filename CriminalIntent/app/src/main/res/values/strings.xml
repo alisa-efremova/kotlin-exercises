@@ -11,6 +11,7 @@
     <string name="choose_suspect">Choose suspect</string>
     <string name="send_crime_report">Send crime report</string>
     <string name="crime_report">%1$s! The crime was discovered on %2$s. %3$s, and %4$s</string>
+    <string name="crime_list_item_description">%1$s %2$s, created at %3$s, %4$s</string>
     <string name="crime_report_solved">The case is solved</string>
     <string name="crime_report_unsolved">The case is not solved</string>
     <string name="crime_report_no_suspect">there is no suspect.</string>
