@@ -18,4 +18,7 @@
     <string name="crime_report_subject">ОТЧЕТ ПО ПРЕСТУПЛЕНИЮ</string>
     <string name="send_report">Послать отчет через</string>
     <string name="call">Позвонить</string>
+    <string name="crime_photo_button_description">Сделать фотографию места преступления</string>
+    <string name="crime_photo_no_image_description">Фотография места преступления (не установлена)</string>
+    <string name="crime_photo_image_description">Фотография места преступления (установлена)</string>
 </resources>

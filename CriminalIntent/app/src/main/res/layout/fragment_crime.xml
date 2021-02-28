@@ -114,6 +114,7 @@
         android:layout_height="80dp"
         android:cropToPadding="true"
         android:scaleType="centerInside"
+        android:contentDescription="@string/crime_photo_no_image_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/placeholder" />
@@ -124,6 +125,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:src="@android:drawable/ic_menu_camera"
+        android:contentDescription="@string/crime_photo_button_description"
         app:layout_constraintEnd_toEndOf="@+id/crime_image_view"
         app:layout_constraintStart_toStartOf="@+id/crime_image_view"
         app:layout_constraintTop_toBottomOf="@+id/crime_image_view" />

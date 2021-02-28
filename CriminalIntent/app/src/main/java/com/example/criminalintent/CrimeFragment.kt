@@ -167,8 +167,10 @@ class CrimeFragment : Fragment() {
     private fun updatePhotoView() {
         if (photoFile?.exists() == true) {
             PictureUtils().setScaledImage(crimeImageView, photoFile!!.path)
+            crimeImageView.contentDescription = getString(R.string.crime_photo_image_description)
         } else {
             crimeImageView.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.placeholder, null))
+            crimeImageView.contentDescription = getString(R.string.crime_photo_no_image_description)
         }
     }
 
