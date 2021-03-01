@@ -14,6 +14,7 @@
         android:layout_marginStart="3dp"
         android:layout_marginEnd="3dp"
         android:text="@{viewModel.title}"
+        android:onClick="@{() -> viewModel.onButtonClicked()}"
         tools:text="Sound name" />
 
 </layout>

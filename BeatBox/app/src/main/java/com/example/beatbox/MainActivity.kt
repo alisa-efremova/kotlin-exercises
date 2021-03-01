@@ -1,7 +1,7 @@
 package com.example.beatbox
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.beatbox.databinding.ActivityMainBinding
@@ -19,10 +19,15 @@ class MainActivity : AppCompatActivity() {
         initViews()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        beatBox.release()
+    }
+
     private fun initViews() {
         binding.recyclerView.apply {
             layoutManager = GridLayoutManager(context, 3)
-            adapter = SoundAdapter(beatBox.sounds)
+            adapter = SoundAdapter(beatBox)
         }
     }
 }

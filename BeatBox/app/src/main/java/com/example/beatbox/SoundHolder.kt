@@ -3,11 +3,11 @@ package com.example.beatbox
 import androidx.recyclerview.widget.RecyclerView
 import com.example.beatbox.databinding.ListItemSoundBinding
 
-class SoundHolder(private val binding: ListItemSoundBinding)
+class SoundHolder(private val binding: ListItemSoundBinding, private val beatBox: BeatBox)
     : RecyclerView.ViewHolder(binding.root) {
 
     init {
-        binding.viewModel = SoundViewModel()
+        binding.viewModel = SoundViewModel(beatBox)
     }
 
     fun bind(sound: Sound) {
