@@ -4,29 +4,28 @@ import android.os.Bundle
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.beatbox.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var beatBox: BeatBox
+
+    private val viewModel: MainActivityViewModel by lazy {
+        ViewModelProvider(this).get(MainActivityViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        beatBox = BeatBox(assets)
+        binding.lifecycleOwner = this
+
+        viewModel.beatBox = BeatBox(assets)
+        binding.viewModel = viewModel
 
         initViews()
         configureSpeedSeekBar()
-
-        binding.lifecycleOwner = this
-        binding.viewModel = MainActivityViewModel(beatBox)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        beatBox.release()
     }
 
     private fun configureSpeedSeekBar() {
@@ -43,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     private fun initViews() {
         binding.recyclerView.apply {
             layoutManager = GridLayoutManager(context, 3)
-            adapter = SoundAdapter(beatBox)
+            adapter = SoundAdapter(viewModel.beatBox!!)
         }
     }
 }
