@@ -1,6 +1,7 @@
 package com.example.beatbox
 
 import android.os.Bundle
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,11 +18,26 @@ class MainActivity : AppCompatActivity() {
         beatBox = BeatBox(assets)
 
         initViews()
+        configureSpeedSeekBar()
+
+        binding.lifecycleOwner = this
+        binding.viewModel = MainActivityViewModel(beatBox)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         beatBox.release()
+    }
+
+    private fun configureSpeedSeekBar() {
+        binding.speedSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                binding.viewModel?.onSpeedRateChanged(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
     }
 
     private fun initViews() {
