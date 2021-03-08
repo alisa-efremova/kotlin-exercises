@@ -10,7 +10,7 @@ class ActivityAdapter(private val activities: List<ResolveInfo>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActivityHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false)
+        val view = layoutInflater.inflate(R.layout.layout_activity_list_item, parent, false)
         return ActivityHolder(view)
     }
 
