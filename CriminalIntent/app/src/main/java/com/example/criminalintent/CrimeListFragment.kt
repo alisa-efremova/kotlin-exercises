@@ -6,15 +6,13 @@ import android.view.*
 import android.widget.Button
 import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class CrimeListFragment : Fragment() {
+class CrimeListFragment : Fragment(R.layout.fragment_crime_list) {
 
-    private val model: CrimeListViewModel by lazy {
-        ViewModelProvider(this).get(CrimeListViewModel::class.java)
-    }
+    private val model: CrimeListViewModel by viewModels()
 
     private lateinit var crimeRecyclerView: RecyclerView
     private lateinit var noCrimesGroup: Group
@@ -27,22 +25,15 @@ class CrimeListFragment : Fragment() {
         callbacks = context as? Callbacks
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         initViews(view)
         setHasOptionsMenu(true)
 
         adapter = CrimeAdapter(requireContext(), callbacks)
         crimeRecyclerView.adapter = adapter
 
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         newCrimeButton.setOnClickListener {
             onAddNewCrime()
         }

@@ -11,9 +11,7 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,9 +20,8 @@ import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,7 +30,7 @@ private const val SHORT_DATE_FORMAT = "EEE, MMM, dd"
 private const val LONG_DATE_FORMAT = "EEEE, MMM dd, yyyy"
 private const val TIME_FORMAT = "hh:mm aaa"
 
-class CrimeFragment : Fragment() {
+class CrimeFragment : Fragment(R.layout.fragment_crime) {
 
     private lateinit var titleEditText: EditText
     private lateinit var crimeImageView: ImageView
@@ -53,36 +50,22 @@ class CrimeFragment : Fragment() {
     private var photoFile: File? = null
     private var photoUri: Uri? = null
 
-    private val model: CrimeViewModel by lazy {
-        ViewModelProvider(this).get(CrimeViewModel::class.java)
-    }
+    private val model: CrimeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         crime = Crime()
 
-        val args: CrimeFragmentArgs by navArgs()
-        val crimeId: UUID = args.crimeId
-
-        model.loadCrime(crimeId)
-
         registerFragmentListeners()
         registerLaunchers()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_crime, container, false)
-        initViews(view)
-        configureListeners()
-        return view
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initViews(view)
+        configureListeners()
 
         model.crimeLiveData.observe(
             viewLifecycleOwner,
