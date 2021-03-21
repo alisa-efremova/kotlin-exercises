@@ -6,12 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
-import androidx.navigation.fragment.navArgs
+import java.io.File
 
 class CrimePhotoDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val args: CrimePhotoDialogFragmentArgs by navArgs()
+        val photoFile = arguments?.getSerializable(EXTRA_PHOTO_FILE) as File
 
         val dialog = Dialog(requireActivity())
 
@@ -23,10 +23,21 @@ class CrimePhotoDialogFragment : DialogFragment() {
         val imageView: ImageView = layout.findViewById(R.id.crime_photo_image_view)
 
         imageView.viewTreeObserver.addOnGlobalLayoutListener {
-            PictureUtils().setScaledImage(imageView, args.photoFile.path)
+            PictureUtils().setScaledImage(imageView, photoFile.path)
         }
 
         return dialog
     }
 
+    companion object {
+        private const val EXTRA_PHOTO_FILE = "photo_file"
+
+        fun newInstance(photoFile: File): DialogFragment {
+            return CrimePhotoDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(EXTRA_PHOTO_FILE, photoFile)
+                }
+            }
+        }
+    }
 }

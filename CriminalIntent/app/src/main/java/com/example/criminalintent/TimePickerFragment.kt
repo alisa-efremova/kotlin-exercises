@@ -5,16 +5,14 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
-import androidx.navigation.fragment.navArgs
 import java.util.*
 
 class TimePickerFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val args: TimePickerFragmentArgs by navArgs()
 
         val calendar = Calendar.getInstance().apply {
-            time = args.date
+            time = arguments?.getSerializable(EXTRA_DATE) as Date
         }
 
         val timeSelectedListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
@@ -37,5 +35,17 @@ class TimePickerFragment : DialogFragment() {
                 calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
                 false)
+    }
+
+    companion object {
+        private const val EXTRA_DATE = "date"
+
+        fun newInstance(date: Date): DialogFragment {
+            return TimePickerFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(EXTRA_DATE, date)
+                }
+            }
+        }
     }
 }

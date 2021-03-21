@@ -2,25 +2,32 @@ package com.example.criminalintent
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import java.util.*
 
 class MainActivity : AppCompatActivity(), Callbacks {
 
-    private var navController: NavController? = null
+    private val navigator = AppNavigator(this, R.id.main_container)
+    private val router = CriminalIntentApplication.INSTANCE.router
+
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        CriminalIntentApplication.INSTANCE.navigatorHolder.setNavigator(navigator)
+    }
+
+    override fun onPause() {
+        CriminalIntentApplication.INSTANCE.navigatorHolder.removeNavigator()
+        super.onPause()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
+        router.navigateTo(Screens.CrimeList())
     }
 
     override fun onCrimeSelected(crimeId: UUID) {
-        val action = CrimeListFragmentDirections.actionEditCrime(crimeId)
-        navController?.navigate(action)
+        router.navigateTo(Screens.Crime(crimeId))
     }
 }

@@ -5,14 +5,19 @@ import com.example.criminalintent.db.CrimeRepository
 import java.io.File
 import java.util.*
 
-private const val NAV_ARGS_KEY_CRIME_ID = "crimeId"
-
 class CrimeViewModel(state: SavedStateHandle) : ViewModel() {
     private val repository = CrimeRepository.get()
-    private val crimeIdLiveData = state.getLiveData<UUID?>(NAV_ARGS_KEY_CRIME_ID)
+    private val crimeIdLiveData = MutableLiveData<UUID>()
+
 
     var crimeLiveData: LiveData<Crime?> = Transformations.switchMap(crimeIdLiveData) {
         crimeId -> repository.getCrime(crimeId)
+    }
+
+    fun loadCrime(crimeId: UUID) {
+        if (crimeIdLiveData.value != crimeId) {
+            crimeIdLiveData.value = crimeId
+        }
     }
 
     fun saveCrime(crime: Crime) {

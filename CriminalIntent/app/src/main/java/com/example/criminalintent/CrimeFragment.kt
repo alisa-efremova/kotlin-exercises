@@ -21,7 +21,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,6 +28,9 @@ import java.util.*
 private const val SHORT_DATE_FORMAT = "EEE, MMM, dd"
 private const val LONG_DATE_FORMAT = "EEEE, MMM dd, yyyy"
 private const val TIME_FORMAT = "hh:mm aaa"
+private const val DATE_DIALOG_TAG = "date_dialog"
+private const val TIME_DIALOG_TAG = "time_dialog"
+private const val PHOTO_DIALOG_TAG = "photo_dialog"
 
 class CrimeFragment : Fragment(R.layout.fragment_crime) {
 
@@ -56,6 +58,8 @@ class CrimeFragment : Fragment(R.layout.fragment_crime) {
         super.onCreate(savedInstanceState)
 
         crime = Crime()
+        val crimeId: UUID = arguments?.getSerializable(EXTRA_CRIME_ID) as UUID
+        model.loadCrime(crimeId)
 
         registerFragmentListeners()
         registerLaunchers()
@@ -166,11 +170,13 @@ class CrimeFragment : Fragment(R.layout.fragment_crime) {
 
     private fun configureListeners() {
         dateButton.setOnClickListener {
-            findNavController().navigate(CrimeFragmentDirections.actionEditDate(crime.date))
+            DatePickerFragment.newInstance(crime.date)
+                .show(this@CrimeFragment.parentFragmentManager, DATE_DIALOG_TAG)
         }
 
         timeButton.setOnClickListener {
-            findNavController().navigate(CrimeFragmentDirections.actionEditTime(crime.date))
+            TimePickerFragment.newInstance(crime.date)
+                .show(this@CrimeFragment.parentFragmentManager, TIME_DIALOG_TAG)
         }
 
         reportButton.setOnClickListener {
@@ -198,7 +204,8 @@ class CrimeFragment : Fragment(R.layout.fragment_crime) {
         }
 
         crimeImageView.setOnClickListener {
-            findNavController().navigate(CrimeFragmentDirections.actionOpenPhoto(photoFile!!))
+            CrimePhotoDialogFragment.newInstance(photoFile!!)
+                .show(this@CrimeFragment.parentFragmentManager, PHOTO_DIALOG_TAG)
         }
     }
 
@@ -355,5 +362,15 @@ class CrimeFragment : Fragment(R.layout.fragment_crime) {
     companion object {
         const val REQUEST_KEY_DATE = "requestKeyDate"
         const val ARG_DATE = "date"
+
+        private const val EXTRA_CRIME_ID = "crime_id"
+
+        fun newInstance(crimeId: UUID): CrimeFragment {
+            return CrimeFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(EXTRA_CRIME_ID, crimeId)
+                }
+            }
+        }
     }
 }
